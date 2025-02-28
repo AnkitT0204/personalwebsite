@@ -11,8 +11,9 @@ const WorkExperience = () => {
 
   return (
     <section className="c-space my-20" id="work">
-      <div className="w-full text-white-600">
-        <p className="head-text">My Work Experience</p>
+      <div className="w-full">
+        <p className="head-text text-blue_gradient">My Work Experience</p>
+
 
         <div className="work-container">
           <div className="work-canvas">
@@ -29,7 +30,13 @@ const WorkExperience = () => {
           </div>
 
           <div className="work-content">
-            <div className="sm:py-10 py-5 sm:px-5 px-2.5">
+            <div className="sm:py-10 py-5 sm:px-5 px-2.5" style={{
+              background: 'linear-gradient(90deg, red, orange, yellow, green)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              color: 'transparent',
+            }}>
               {workExperiences.map((item, index) => (
                 <div
                   key={index}
@@ -46,11 +53,23 @@ const WorkExperience = () => {
                   </div>
 
                   <div className="sm:p-5 px-2.5 py-5">
-                    <p className="font-bold text-white-800">{item.name}</p>
+                    <p className="font-bold text-white-800" style={{
+                      background: 'linear-gradient(90deg, red, orange, yellow, green)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                    }}>{item.name}</p>
                     <p className="text-sm mb-5">
                       {item.pos} -- <span>{item.duration}</span>
                     </p>
-                    <p className="group-hover:text-white transition-all ease-in-out duration-500">{item.title}</p>
+                    <p className="group-hover:text-white transition-all ease-in-out duration-500" style={{
+                      background: 'linear-gradient(90deg, red, orange, yellow, green)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                    }}   >{item.title}</p>
                   </div>
                 </div>
               ))}
