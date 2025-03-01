@@ -10,6 +10,8 @@ import WorkExperience from './sections/Experience.jsx';
 import catImage from './cat.png';
 import StartLoading from './StartLoading';
 import RockPaperGame from './3DRockPaper.jsx'; 
+import { db } from './firebase';
+import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
 
 const App = () => {
   const canvasRef = useRef(null);
@@ -36,8 +38,8 @@ const App = () => {
   const [visitorName, setVisitorName] = useState('');
   const [visitorCompany, setVisitorCompany] = useState('');
   const [showVisitorForm, setShowVisitorForm] = useState(false);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(true);
 
- 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -46,12 +48,35 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
- 
+  // Fetch visitor logs from Firestore
   useEffect(() => {
-    const savedLogs = localStorage.getItem('visitorLogs');
-    if (savedLogs) {
-      setVisitorLogs(JSON.parse(savedLogs));
-    }
+    const fetchVisitorLogs = async () => {
+      try {
+        setIsLoadingLogs(true);
+        const visitorLogsRef = collection(db, "visitorLogs");
+        const q = query(visitorLogsRef, orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        const logs = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          logs.push({
+            name: data.name,
+            company: data.company,
+            date: new Date(data.timestamp.toDate()).toLocaleString(),
+            outcome: data.outcome
+          });
+        });
+        
+        setVisitorLogs(logs);
+      } catch (error) {
+        console.error("Error fetching visitor logs:", error);
+      } finally {
+        setIsLoadingLogs(false);
+      }
+    };
+
+    fetchVisitorLogs();
   }, []);
 
   // Close dropdown when clicking outside
@@ -114,23 +139,34 @@ const App = () => {
     setDropdownOpen(false);
   };
 
-  const handleVisitorSubmit = (e) => {
+  const handleVisitorSubmit = async (e) => {
     e.preventDefault();
-    const newVisitor = {
-      name: visitorName,
-      company: visitorCompany,
-      date: new Date().toLocaleString(),
-      outcome: 'Winner'
-    };
+    
+    try {
+      const newVisitor = {
+        name: visitorName,
+        company: visitorCompany,
+        timestamp: new Date(),
+        outcome: 'Winner'
+      };
 
-    const updatedLogs = [...visitorLogs, newVisitor];
-    setVisitorLogs(updatedLogs);
-
-    localStorage.setItem('visitorLogs', JSON.stringify(updatedLogs));
-
-    setVisitorName('');
-    setVisitorCompany('');
-    setShowVisitorForm(false);
+      // Add to Firestore
+      await addDoc(collection(db, "visitorLogs"), newVisitor);
+      
+      // Update local state with formatted date for display
+      const visitorWithFormattedDate = {
+        ...newVisitor,
+        date: newVisitor.timestamp.toLocaleString()
+      };
+      
+      setVisitorLogs([visitorWithFormattedDate, ...visitorLogs]);
+      setVisitorName('');
+      setVisitorCompany('');
+      setShowVisitorForm(false);
+    } catch (error) {
+      console.error("Error adding visitor:", error);
+      alert("Failed to save your information. Please try again.");
+    }
   };
 
   const toggleDropdown = () => {
@@ -160,7 +196,6 @@ const App = () => {
               <div className="lg:hidden">
                 <button
                   onClick={toggleDropdown}
-        
                 >
                   <span className="relative z-10 text-white font-bold text-lg"  style={{
                         background: 'linear-gradient(90deg, red, orange, yellow, green)',
@@ -270,7 +305,9 @@ const App = () => {
                   </button>
                 </div>
 
-                {visitorLogs.length === 0 ? (
+                {isLoadingLogs ? (
+                  <p className="text-center py-8">Loading visitor logs...</p>
+                ) : visitorLogs.length === 0 ? (
                   <p className="text-gray-500 text-center py-8">No visitors recorded yet.</p>
                 ) : (
                   <table className="w-full">
