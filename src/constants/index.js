@@ -175,7 +175,7 @@ export const calculateSizes = (isSmall, isMobile, isTablet) => {
 export const workExperiences = [
   {
     id: 1,
-    name: 'Yum Brnads! (KFC | PIZZA HUT | TACO BELL)',
+    name: 'Yum Brands! (KFC | PIZZA HUT | TACO BELL)',
     pos: 'Software Developer',
     duration: '2023 - 2024',
     title: "Developed and launched the KFC UK Data Intelligence Dashboard using Ant Design and React, integrating with RESTful APIs to manage extensive data requests, improving data processing eﬃciency by 40%",
@@ -184,7 +184,7 @@ export const workExperiences = [
   },
   {
     id: 3,
-    name: 'Yum Brnads!(KFC | PIZZA HUT | TACO BELL)',
+    name: 'Yum Brands!(KFC | PIZZA HUT | TACO BELL)',
     pos: 'Intern Software Developer',
     duration: '2023 - 2023',
     title: "Engineered robust app and web automation frameworks leveraging JavaScript and ElasticSearch for eﬃcient backend data handling, Appium for seamless cross-platform mobile application testing, and Apache Airflow for orchestrating complex CI/CD pipelines.",
